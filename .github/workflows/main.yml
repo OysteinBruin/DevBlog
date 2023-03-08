@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 # Run workflow on every push to the master branch
 on:
   push:
-    branches: [ gh-pages ]
+    branches: [ main ]
 
 jobs:
   deploy-to-github-pages:
@@ -39,5 +39,5 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@3.7.1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: main
+        BRANCH: gh-pages
         FOLDER: release/wwwroot
