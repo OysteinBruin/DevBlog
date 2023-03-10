@@ -1,13 +1,36 @@
 using DevBlog.Extensions;
+using DevBlog.Infrastructure.Extensions;
 using DevBlog.Wasm;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Serilog;
+using Serilog.Debugging;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+//SelfLog.Enable(m => Console.Error.WriteLine(m));
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddMudBlazor();
+//Log.Logger = new LoggerConfiguration()
+//    .MinimumLevel.Information()
+//    .WriteTo.BrowserConsole()
+//    .CreateLogger();
 
-await builder.Build().RunAsync();
+//Log.Information("Starting up application");
+
+try
+{
+    var builder = WebAssemblyHostBuilder.CreateDefault(args);
+    builder.RootComponents.Add<App>("#app");
+    builder.RootComponents.Add<HeadOutlet>("head::after");
+
+    //Log.Information("Adding infrastructure layer");
+    builder.AddServices();
+    builder.Services.AddMudBlazor();
+
+    await builder.Build().RunAsync();
+}
+catch (Exception ex)
+{
+    //Log.Fatal(ex, "An exception occurred while creating the Blazor WASM client aplication");
+    throw;
+}
+
+

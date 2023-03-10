@@ -1,0 +1,48 @@
+﻿@page "/post/{Id}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using System.Text.Json.Serialization
+@using BlogClient.Models;
+@using DevBlog.Infrastructure.Interfaces;
+@using Markdig;
+@using Microsoft.Extensions.Configuration;
+
+@inject IBlogPostService BlodDataServioce
+
+@if (postDetails == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudText Typo="Typo.h4">@postDetails.data.attributes.title</MudText>
+    <MudImage Fluid="true" Src="@postDetails.data.attributes.imageUrl" Alt="blog image" Class="rounded-lg" />
+    <div class="markdown-content">
+        @((MarkupString)MdToHtml(postDetails.data.attributes.content))
+    </div>
+
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="NavigateToHome">Back</MudButton>
+}
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    private PostDetailsModel postDetails = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        postDetails = await BlodDataServioce.GetSinglePost();
+    }
+
+    private void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private string MdToHtml(string md)
+    {
+        string html = Markdown.ToHtml(md);
+        return html;
+    }
+
+}
